@@ -1,5 +1,6 @@
 "use client";
 import { useFormik } from "formik";
+import * as Yup from "yup";
 
 type FormDataType = {
 	name: string;
@@ -19,6 +20,12 @@ export const Form = () => {
 		email: "",
 		channel: "",
 	};
+
+	const validationSchema = Yup.object({
+		name: Yup.string().required("Required"),
+		email: Yup.string().email("Invalid Email").required("Required"),
+		channel: Yup.string().required("Required"),
+	});
 
 	function onSubmit(formData: FormDataType) {
 		console.log(formData);
@@ -44,12 +51,20 @@ export const Form = () => {
 		return errors;
 	}
 
-	const { touched, handleBlur, errors, handleChange, values, handleSubmit } =
-		useFormik({
-			initialValues: initialValues,
-			onSubmit: onSubmit,
-			validate: validate,
-		});
+	const {
+		touched,
+		handleBlur,
+		errors,
+		handleChange,
+		getFieldProps,
+		values,
+		handleSubmit,
+	} = useFormik({
+		initialValues: initialValues,
+		onSubmit: onSubmit,
+		validationSchema: validationSchema,
+		//validate: validate,
+	});
 
 	console.log(touched);
 
@@ -57,36 +72,27 @@ export const Form = () => {
 		<form onSubmit={handleSubmit} className="flex flex-col gap-2 items-center">
 			<input
 				type="text"
-				onChange={handleChange}
-				value={values.name}
 				className="p-2 rounded-md "
 				placeholder="Name..."
-				name="name"
-				onBlur={handleBlur}
+				{...getFieldProps("name")}
 			/>
 			{touched.name && errors.name ? (
 				<span className="text-red-500">{errors.name}</span>
 			) : null}
 			<input
 				type="email"
-				onChange={handleChange}
-				value={values.email}
 				className="p-2 rounded-md "
 				placeholder="Email..."
-				name="email"
-				onBlur={handleBlur}
+				{...getFieldProps("email")}
 			/>
 			{touched.email && errors.email ? (
 				<span className="text-red-500">{errors.email}</span>
 			) : null}
 			<input
 				type="text"
-				onChange={handleChange}
-				value={values.channel}
 				className="p-2 rounded-md "
 				placeholder="Channel..."
-				name="channel"
-				onBlur={handleBlur}
+				{...getFieldProps("channel")}
 			/>
 			{touched.channel && errors.channel ? (
 				<span className="text-red-500">{errors.channel}</span>
